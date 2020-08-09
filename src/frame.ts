@@ -1,7 +1,7 @@
 export type Position = FixedPosition|AnchoredPosition|LayoutPosition;
 
 export class FixedPosition{
-	kind:"fixed";
+	kind:"fixed" = "fixed";
 	x:number;
 	y:number;
 
@@ -15,7 +15,7 @@ export type XAlign = "left"|"center"|"right"
 export type YAlign = "top"|"center"|"bottom"
 
 export class AnchoredPosition{
-	kind:"anchored";
+	kind:"anchored" = "anchored";
 	x:number;
 	y:number;
 
@@ -42,25 +42,33 @@ export class AnchoredPosition{
 }
 
 export class LayoutPosition{
-	kind:"layout"
+	kind:"layout" = "layout"
 }
 
 
 export type Layout = NoChildLayout|ColumnLayout|RowLayout|GridLayout
 
 export class NoChildLayout{
-	kind:"NoChildLayout"
+	kind:"NoChildLayout" = "NoChildLayout"
 } 
 export class ColumnLayout{
-	kind:"ColumnLayout"
+	kind:"ColumnLayout" = "ColumnLayout"
 	spacing:number;
+
+	constructor(s:number = 0){
+		this.spacing = s;
+	}
 } 
 export class RowLayout{
-	kind:"RowLayout"
+	kind:"RowLayout" = "RowLayout"
 	spacing:number;
+
+	constructor(s:number = 0){
+		this.spacing = s;
+	}
 } 
 export class GridLayout{
-	kind:"GridLayout"
+	kind:"GridLayout" = "GridLayout"
 	spacing:number;
 	col:number;
 	row:number;
@@ -77,7 +85,7 @@ export class Size{
 }
 
 export class Window{
-	kind:"window";
+	kind:"window" = "window"
 	globalPosition:FixedPosition;
 	size:Size;
 
@@ -90,7 +98,7 @@ export class Window{
 export type PaintFunction = (x:number,y:number,width:number,height:number)=>void;
 
 export class Frame{
-	kind:"frame";
+	kind:"frame" = "frame"
 	pos:Position;
 	currentPosition:FixedPosition;
 	globalPosition:FixedPosition;
@@ -107,6 +115,9 @@ export class Frame{
 			layout:Layout = new NoChildLayout(),
 			paint:PaintFunction|null,
 	){
+		this.currentPosition = new FixedPosition();
+		this.globalPosition = new FixedPosition();
+		this.children = [];
 		this.pos = pos;
 		this.size = size;
 		this.parent = parent;
@@ -152,10 +163,12 @@ export class Frame{
 			case "fixed" : {
 				this.currentPosition.x = this.pos.x;
 				this.currentPosition.y = this.pos.y;
+				break;
 			}
 			case "anchored" : {
 				this.currentPosition.x = this.pos.x * (this.parent.size.w - this.size.w);
 				this.currentPosition.y = this.pos.y * (this.parent.size.h - this.size.h);
+				break;
 			}
 		}
 		this.globalPosition.x = this.currentPosition.x + this.parent.globalPosition.x;
@@ -169,7 +182,6 @@ export class Frame{
 	}
 
 	layoutChild(){
-
 		if (this.layout.kind == "NoChildLayout"){
 			return;
 		}
@@ -182,10 +194,12 @@ export class Frame{
 			case "ColumnLayout":{
 				let y:number =0;
 				for(let i=0;i<layoutChild.length;i++){
+					print(y)
 					layoutChild[i].currentPosition.x = 0;
 					layoutChild[i].currentPosition.y = y;
 					y = y + layoutChild[i].size.h + this.layout.spacing;
 				}
+				break;
 			}
 			case "RowLayout":{
 				let x:number =0;
@@ -194,8 +208,10 @@ export class Frame{
 					layoutChild[i].currentPosition.y = 0;
 					x = x + layoutChild[i].size.w + this.layout.spacing;
 				}
+				break;
 			}
 			case "GridLayout":{
+				break;
 			}
 		}
 

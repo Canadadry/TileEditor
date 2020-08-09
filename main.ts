@@ -1,23 +1,45 @@
-import {Panel, PanelParam} from './src/panel'
-import { Color } from './src/color'
+import {Window,Frame,PaintFunction,FixedPosition,LayoutPosition,Size,ColumnLayout,RowLayout,NoChildLayout} from './src/frame'
 
 
-let panel:Panel;
+let WhiteRectangle:PaintFunction =  (x:number,y:number,width:number,height:number)=>{
+	love.graphics.setColor(1,1,1,255)
+	love.graphics.rectangle("fill",x,y,width,height)			
+}
+
+let RedRectangle:PaintFunction =  (x:number,y:number,width:number,height:number)=>{
+	love.graphics.setColor(1,0,0,255)
+	love.graphics.rectangle("fill",x,y,width,height)			
+}
+
+let window:Window;
+let frame:Frame;
 
 love.update = function(dt) {}
 
 love.draw = function() {
-	panel.draw()
+	frame.draw()
 }
 
 love.load = function() {
-	let param = new PanelParam()
-	param.frame.w = 200
-	param.frame.h = 10
-	param.fill = new Color(0,0.1,0.3)
-	param.align.v = "CENTER"
-	param.align.h = "CENTER"
-	panel = new Panel(param)
+	window = new Window(love.window.getMode()[0],love.window.getMode()[1])
+	frame = new Frame(
+		new FixedPosition(0,0),
+		new Size(200,600),
+		window,
+		new ColumnLayout(10),
+		WhiteRectangle
+	)
+
+	for(let i=0;i<4;i++){
+		let subframe = new Frame(
+			new LayoutPosition(),
+			new Size(100,100),
+			frame,
+			new NoChildLayout(),
+			RedRectangle
+		)
+	}
+	frame.update()
 }
 
 
