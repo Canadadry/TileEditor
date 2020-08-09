@@ -219,4 +219,9 @@ export class Frame{
 		}
 	}
 
+	hitTest(x:number,y:number):boolean{
+ 		return	x >= this.globalPosition.x && x <= this.globalPosition.x + this.size.w &&
+				y >= this.globalPosition.y && y <= this.globalPosition.y + this.size.h
+ 	}
+
 }
