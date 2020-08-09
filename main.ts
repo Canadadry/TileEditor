@@ -5,6 +5,9 @@ import {Layout,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/fram
 import {Frame,PaintFunction,} from './src/frame/frame';
 import {RectanglePainter} from './src/painter/rectangle';
 import {ImagePainter} from './src/painter/image';
+import {LabelPainter} from './src/painter/label';
+import {GroupPainter} from './src/painter/group';
+import {NinePatchPainter} from './src/painter/ninepatch';
 import {Colors} from './src/painter/color';
 
 
@@ -23,6 +26,7 @@ love.draw = function() {
 
 love.load = function() {
 	let img:Image = love.graphics.newImage( "assets/Icon.png" );
+	let np:Image = love.graphics.newImage( "assets/ninepatch.png" );
 
 	window = new Window(love.window.getMode()[0],love.window.getMode()[1])
 	frame = new Frame(
@@ -30,7 +34,10 @@ love.load = function() {
 		new Size(200,600),
 		window,
 		new GridLayout(3,10),
-		ImagePainter(img)
+		GroupPainter([	
+			ImagePainter(img),
+			LabelPainter("Hello World!",Colors.White),
+		])
 	)
 
 	for(let i=0;i<7;i++){
@@ -42,6 +49,13 @@ love.load = function() {
 			RectanglePainter(Colors.Red,50)
 		)
 	}
+	let subframe = new Frame(
+		new FixedPosition(200,100),
+		new Size(400,400),
+		frame,
+		new NoChildLayout(),
+		NinePatchPainter(np,63,63,63,63)
+	)
 }
 
 love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean ){
