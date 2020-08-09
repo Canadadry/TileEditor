@@ -70,8 +70,15 @@ export class RowLayout{
 export class GridLayout{
 	kind:"GridLayout" = "GridLayout"
 	spacing:number;
-	col:number;
-	row:number;
+	col:number;	
+
+	constructor(c:number= 1,s:number = 0){
+		this.spacing = s;
+		this.col = c;
+		if(this.col<1){
+			this.col = 1;
+		}
+	}
 } 
 
 export class Size{
@@ -186,22 +193,32 @@ export class Frame{
 			table.insert(layoutChild,this.children[i])
 		}
 		if(this.layout.kind == "ColumnLayout"){
-				let y:number =0;
-				for(let i=0;i<layoutChild.length;i++){
-					layoutChild[i].currentPosition.x = 0;
-					layoutChild[i].currentPosition.y = y;
-					y = y + layoutChild[i].size.h + this.layout.spacing;
-				}
+			let y:number =0;
+			for(let i=0;i<layoutChild.length;i++){
+				layoutChild[i].currentPosition.x = 0;
+				layoutChild[i].currentPosition.y = y;
+				y = y + layoutChild[i].size.h + this.layout.spacing;
+			}
 		}else if (this.layout.kind == "RowLayout"){
-				let x:number =0;
-				for(let i=0;i<layoutChild.length;i++){
-					layoutChild[i].currentPosition.x = x;
-					layoutChild[i].currentPosition.y = 0;
-					x = x + layoutChild[i].size.w + this.layout.spacing;
-				}
+			let x:number =0;
+			for(let i=0;i<layoutChild.length;i++){
+				layoutChild[i].currentPosition.x = x;
+				layoutChild[i].currentPosition.y = 0;
+				x = x + layoutChild[i].size.w + this.layout.spacing;
+			}
 		}else if (this.layout.kind == "GridLayout"){
+			let x:number =0;
+			let y:number =0;
+			for(let i:number=0;i<layoutChild.length;i++){	
+				if(i%this.layout.col==0 && i!=0){
+					y = y + layoutChild[i].size.h + this.layout.spacing;
+					x = 0			
+				}
+				layoutChild[i].currentPosition.x = x;
+				layoutChild[i].currentPosition.y = y;
+				x = x + layoutChild[i].size.w + this.layout.spacing;
+			}
 		}
-
 	}
 
 	draw(){

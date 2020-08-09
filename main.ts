@@ -1,4 +1,4 @@
-import {Window,Frame,PaintFunction,FixedPosition,LayoutPosition,Size,ColumnLayout,RowLayout,NoChildLayout} from './src/frame'
+import {Window,Frame,PaintFunction,FixedPosition,LayoutPosition,Size,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/frame'
 
 
 let WhiteRectangle:PaintFunction =  (x:number,y:number,width:number,height:number)=>{
@@ -26,11 +26,11 @@ love.load = function() {
 		new FixedPosition(0,0),
 		new Size(200,600),
 		window,
-		new ColumnLayout(10),
+		new GridLayout(3,10),
 		WhiteRectangle
 	)
 
-	for(let i=0;i<4;i++){
+	for(let i=0;i<7;i++){
 		let subframe = new Frame(
 			new LayoutPosition(),
 			new Size(100,100),
