@@ -1,4 +1,8 @@
-import {Window,Frame,PaintFunction,FixedPosition,LayoutPosition,Size,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/frame'
+import {Position,FixedPosition,LayoutPosition,XAlign,YAlign} from './src/position';
+import {Size} from './src/size';
+import {Window} from './src/window';
+import {Layout,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/layout';
+import {Frame,PaintFunction,} from './src/frame'
 
 function rectangle(r:number,g:number,b:number) :PaintFunction{
 	return (x:number,y:number,width:number,height:number)=>{
@@ -37,7 +41,6 @@ love.load = function() {
 			frame,
 			new NoChildLayout(),
 			rectangle(1,0,0)
-
 		)
 	}
 }
