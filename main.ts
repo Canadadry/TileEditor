@@ -3,7 +3,8 @@ import {Size} from './src/frame/size';
 import {Window} from './src/frame/window';
 import {Layout,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/frame/layout';
 import {Frame,PaintFunction,} from './src/frame/frame';
-import {Rectangle} from './src/painter/rectangle';
+import {RectanglePainter} from './src/painter/rectangle';
+import {ImagePainter} from './src/painter/image';
 import {Colors} from './src/painter/color';
 
 
@@ -21,13 +22,15 @@ love.draw = function() {
 }
 
 love.load = function() {
+	let img:Image = love.graphics.newImage( "assets/Icon.png" );
+
 	window = new Window(love.window.getMode()[0],love.window.getMode()[1])
 	frame = new Frame(
 		new FixedPosition(0,0),
 		new Size(200,600),
 		window,
 		new GridLayout(3,10),
-		Rectangle(Colors.White)
+		ImagePainter(img)
 	)
 
 	for(let i=0;i<7;i++){
@@ -36,7 +39,7 @@ love.load = function() {
 			new Size(200,100),
 			frame,
 			new NoChildLayout(),
-			Rectangle(Colors.Red,50)
+			RectanglePainter(Colors.Red,50)
 		)
 	}
 }
@@ -45,7 +48,7 @@ love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean 
 	picked = frame.pick(x,y);
 	if(picked){
 		lastPaint = picked.paint
-		picked.paint = Rectangle(Colors.Blue)
+		picked.paint = RectanglePainter(Colors.Blue)
 	}
 }
 
