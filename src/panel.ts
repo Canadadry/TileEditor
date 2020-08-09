@@ -212,7 +212,6 @@ export class Panel{
 	top(inside:boolean){
     	let value:number = 0
 	    if(inside){
-
 			for(let i=0;i<this.children.length;i++){
 				let v = this.children[i]
 				value = math.max(value, this.tframe.y + v.frame.y + v.frame.h)
@@ -223,4 +222,103 @@ export class Panel{
 	    return value
 	}
 
+	bottom(inside:boolean){
+		let value:number = this.tframe.y + this.tframe.h
+		if(inside){
+			for(let i=0;i<this.children.length;i++){
+				let v = this.children[i]
+				value = math.min(value, this.tframe.y + v.frame.y)
+			}
+		}else{
+			value = this.tframe.y
+		}
+		return value
+	}
+
+	right(inside:boolean){
+		let value:number = 0
+		if (inside) {
+			for(let i=0;i<this.children.length;i++){
+				let v = this.children[i]            
+				value = math.max(value, this.tframe.x + v.frame.x + v.frame.w)
+
+			}
+		}else{
+			value = this.tframe.x + this.tframe.w
+		}
+		return value
+	}
+
+
+	layoutHorizontal(spacing:number, stretch:boolean){
+		if (stretch) {
+			let width = (this.frame.w - spacing * (this.children.length+1)) / this.children.length
+			let x = spacing
+			for(let i=0;i<this.children.length;i++){
+				let v = this.children[i]       
+				v.frame.x = x
+				v.frame.w = width
+				x = x + width + spacing
+				v.needsLayout = true
+			}
+		}else{
+			let x = spacing
+			for(let i=0;i<this.children.length;i++){
+				let v = this.children[i]      
+				v.frame.x = x
+				x = x + v.frame.w + spacing
+				v.needsLayout = true
+			}
+		}
+		this.update()
+	}
+
+	layoutVertical(spacing:number, stretch:boolean){
+		if (stretch) {
+			let height = (this.frame.h - spacing * (this.children.length+1)) / this.children.length
+			let y = this.frame.h - spacing
+
+			for(let i=0;i<this.children.length;i++){
+				let v = this.children[i]  
+				v.frame.y = y - v.frame.h
+				v.frame.h = height
+				y = y - height - spacing
+				v.needsLayout = true
+			}
+		}else{
+			let y = this.frame.h - spacing
+
+			for(let i=0;i<this.children.length;i++){
+				let v = this.children[i]  
+				v.frame.y = y - v.frame.h
+				y = y - v.frame.h - spacing
+				v.needsLayout = true
+			}
+		}
+		this.update()
+	}
+
+	addChild(child:Panel){
+		let f = child.getFrame()
+		child.parent = this
+		child.setFrame(f)
+		table.insert(this.children,child)
+	}
+
+	hitTest(x:number,y:number):boolean{
+		return	x >= this.tframe.x && x <= this.tframe.x + this.tframe.w &&
+				y >= this.tframe.y && y <= this.tframe.y + this.tframe.h
+	}
+	touched(touch:Vec2):boolean{
+	    return this.interactive && this.visible && this.hitTest(touch.x, touch.y)
+	}
+
 }
+
+
+
+
+
+
+
+
