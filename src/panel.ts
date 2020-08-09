@@ -17,6 +17,15 @@ export class PanelParam{
 	size:Vec2=new Vec2(1,1);
 }
 
+class Window{
+	frame:Frame = new Frame();
+	tframe:Frame= new Frame();
+
+	getFrame():Frame{
+		return this.frame;
+	}
+}
+
 export class Panel{	
 
 	anchor:Vec2;
@@ -30,7 +39,7 @@ export class Panel{
 	opaque:boolean;
 	needsLayout:boolean;
 	children:Array<Panel>;
-	parent:Panel|null;
+	parent:Panel|Window|null;
 	align:Align;
 	border:number;
 	inset:number;
@@ -49,7 +58,8 @@ export class Panel{
 			params.parent.addChild(this)
 		} 
 
-		this.setFrame(params.frame)   
+		this.setFrame(params.frame)  
+		this.tframe = new Frame(); 
 
 		this.anchor = params.anchor
 		this.size = params.size
@@ -79,6 +89,9 @@ export class Panel{
 		love.graphics.push("all")
 		love.graphics.translate(this.frame.x, this.frame.y)
 
+		love.graphics.setColor(this.fill.r,this.fill.g,this.fill.b,255)
+		love.graphics.rectangle("fill",0,0,this.frame.w,this.frame.h)
+
 		for(let i=0;i<this.children.length;i++){
 			this.children[i].draw()
 		}
@@ -88,7 +101,7 @@ export class Panel{
 	update(){
 		let fakeParent = false;
 		if(!this.parent){
-			this.parent = new Panel(new PanelParam());
+			this.parent = new Window();
 			this.parent.frame.w = love.window.getMode()[0]
 			this.parent.frame.h = love.window.getMode()[1]
 			this.parent.tframe.x = 0
