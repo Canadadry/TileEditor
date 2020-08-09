@@ -159,17 +159,12 @@ export class Frame{
 	}
 
 	update(){
-		switch (this.pos.kind){
-			case "fixed" : {
+		if (this.pos.kind == "fixed"){
 				this.currentPosition.x = this.pos.x;
 				this.currentPosition.y = this.pos.y;
-				break;
-			}
-			case "anchored" : {
+		}else if (this.pos.kind == "anchored" ) {
 				this.currentPosition.x = this.pos.x * (this.parent.size.w - this.size.w);
 				this.currentPosition.y = this.pos.y * (this.parent.size.h - this.size.h);
-				break;
-			}
 		}
 		this.globalPosition.x = this.currentPosition.x + this.parent.globalPosition.x;
 		this.globalPosition.y = this.currentPosition.y + this.parent.globalPosition.y;
@@ -190,29 +185,21 @@ export class Frame{
 		for(let i=0;i<this.children.length;i++){
 			table.insert(layoutChild,this.children[i])
 		}
-		switch(this.layout.kind){
-			case "ColumnLayout":{
+		if(this.layout.kind == "ColumnLayout"){
 				let y:number =0;
 				for(let i=0;i<layoutChild.length;i++){
-					print(y)
 					layoutChild[i].currentPosition.x = 0;
 					layoutChild[i].currentPosition.y = y;
 					y = y + layoutChild[i].size.h + this.layout.spacing;
 				}
-				break;
-			}
-			case "RowLayout":{
+		}else if (this.layout.kind == "RowLayout"){
 				let x:number =0;
 				for(let i=0;i<layoutChild.length;i++){
 					layoutChild[i].currentPosition.x = x;
 					layoutChild[i].currentPosition.y = 0;
 					x = x + layoutChild[i].size.w + this.layout.spacing;
 				}
-				break;
-			}
-			case "GridLayout":{
-				break;
-			}
+		}else if (this.layout.kind == "GridLayout"){
 		}
 
 	}
