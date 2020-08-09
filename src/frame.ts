@@ -114,6 +114,7 @@ export class Frame{
 	children:Frame[];
 	layout:Layout;
 	paint:PaintFunction|null;
+	needUpdate:boolean;
 
 	constructor(
 			pos:Position,
@@ -133,7 +134,7 @@ export class Frame{
 		}
 		this.layout = layout;
 		this.paint = paint;
-		this.update();
+		this.needUpdate = true;
 	}
 
 	moveAt(x:number,y:number){
@@ -142,7 +143,7 @@ export class Frame{
 		}
 		this.pos.x = x;
 		this.pos.y = y;
-		this.update();
+		this.needUpdate = true;
 	}
 
 	anchorAt(x:XAlign,y:YAlign){
@@ -151,21 +152,24 @@ export class Frame{
 		}
 		this.pos.setX(x);
 		this.pos.setY(y);
-		this.update();
+		this.needUpdate = true;
 	}
 
 	switchPositionType(pos:Position){
 		this.pos = pos;
-		this.update();
+		this.needUpdate = true;
 	}
 
 	resize(w:number,h:number){
 		this.size.w = w;
 		this.size.h = h;
-		this.update();
+		this.needUpdate = true;
 	}
 
-	update(){
+	update(forced:boolean=false){
+		if(this.needUpdate == false && forced == false ){
+			return;
+		}
 		if (this.pos.kind == "fixed"){
 				this.currentPosition.x = this.pos.x;
 				this.currentPosition.y = this.pos.y;
@@ -178,8 +182,10 @@ export class Frame{
 
 		this.layoutChild()
 
+		this.needUpdate = false;
+
 		for(let i=0;i<this.children.length;i++){
-			this.children[i].update()
+			this.children[i].update(true)
 		}
 	}
 
@@ -240,5 +246,19 @@ export class Frame{
  		return	x >= this.globalPosition.x && x <= this.globalPosition.x + this.size.w &&
 				y >= this.globalPosition.y && y <= this.globalPosition.y + this.size.h
  	}
+
+ 	pick(x:number,y:number):Frame|null{
+ 		if(this.hitTest(x,y) == false){
+ 			return null
+ 		}
+ 		let found:Frame = this;
+ 		for(let i=0;i<this.children.length;i++){
+			if(this.children[i].pick(x,y) != null){
+				found = this.children[i]
+			}
+		}
+		return found
+	}
+
 
 }

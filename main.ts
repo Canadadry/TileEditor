@@ -1,20 +1,20 @@
 import {Window,Frame,PaintFunction,FixedPosition,LayoutPosition,Size,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/frame'
 
-
-let WhiteRectangle:PaintFunction =  (x:number,y:number,width:number,height:number)=>{
-	love.graphics.setColor(1,1,1,255)
-	love.graphics.rectangle("fill",x,y,width,height)			
-}
-
-let RedRectangle:PaintFunction =  (x:number,y:number,width:number,height:number)=>{
-	love.graphics.setColor(1,0,0,255)
-	love.graphics.rectangle("fill",x,y,width,height)			
+function rectangle(r:number,g:number,b:number) :PaintFunction{
+	return (x:number,y:number,width:number,height:number)=>{
+		love.graphics.setColor(r,g,g,255)
+		love.graphics.rectangle("fill",x,y,width,height)
+	}
 }
 
 let window:Window;
 let frame:Frame;
+let picked:Frame|null;
+let lastPaint:PaintFunction|null;
 
-love.update = function(dt) {}
+love.update = function(dt) {
+	frame.update()
+}
 
 love.draw = function() {
 	frame.draw()
@@ -27,7 +27,7 @@ love.load = function() {
 		new Size(200,600),
 		window,
 		new GridLayout(3,10),
-		WhiteRectangle
+		rectangle(1,1,1)
 	)
 
 	for(let i=0;i<7;i++){
@@ -36,17 +36,23 @@ love.load = function() {
 			new Size(100,100),
 			frame,
 			new NoChildLayout(),
-			RedRectangle
+			rectangle(1,0,0)
+
 		)
 	}
-	frame.update()
 }
 
-
-
 love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean ){
+	picked = frame.pick(x,y);
+	if(picked){
+		lastPaint = picked.paint
+		picked.paint = rectangle(0,1,1)
+	}
 }
 
 love.mousereleased = function( x:number, y:number, button:number,isTouch:boolean ){
-
+	if(picked){
+		picked.paint = lastPaint
+		lastPaint = null
+	}
 }
