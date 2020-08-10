@@ -5,7 +5,7 @@ import {Layout,ColumnLayout,RowLayout,NoChildLayout,GridLayout} from './src/fram
 import {Frame,PaintFunction,} from './src/frame/frame';
 import {RectanglePainter} from './src/painter/rectangle';
 import {ImagePainter} from './src/painter/image';
-import {TilePainter,TileSheet} from './src/painter/tile';
+import {TilePainter,TileSheet,Tile} from './src/painter/tile';
 import {LabelPainter} from './src/painter/label';
 import {GroupPainter} from './src/painter/group';
 import {NinePatchPainter} from './src/painter/ninepatch';
@@ -49,7 +49,7 @@ love.load = function() {
 		new Size(50,50),
 		root,
 		new NoChildLayout(),
-		TilePainter(icons,33,17,Colors.Red)
+		TilePainter(icons,new Tile(33,17),Colors.Red)
 	)
 	for(let i=0;i<13;i++){
 		ExampleButton(root,200,100,""+i,(id:string)=>{ print(id) })

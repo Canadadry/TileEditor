@@ -23,17 +23,27 @@ export class TileSheet{
 	}
 }
 
-export function TilePainter(sheet:TileSheet,tileX:number,tileY:number,c:Color) : PaintFunction{
+export class Tile {
+	x:number
+	y:number
 
-	if(tileX>=sheet.column){
-		tileX= 0
+	constructor(x:number,y:number){
+		this.x = x
+		this.y = y
 	}
-	if(tileY>=sheet.row){
-		tileY= 0
+}
+
+export function TilePainter(sheet:TileSheet,tile:Tile,c:Color) : PaintFunction{
+
+	if(tile.x>=sheet.column){
+		tile.x= 0
+	}
+	if(tile.y>=sheet.row){
+		tile.y= 0
 	}
 
 	let quad:Quad = love.graphics.newQuad(
-		tileX*sheet.tile_w,tileY*sheet.tile_h,
+		tile.x*sheet.tile_w,tile.y*sheet.tile_h,
 		sheet.tile_w,sheet.tile_h,
 		sheet.img_w,sheet.img_h,
 	)
