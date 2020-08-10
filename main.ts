@@ -15,6 +15,7 @@ import {Button,ActionFunction} from './src/ui/button';
 
 let root:Frame;
 let toolSize:number= 35;
+let toolTile:Tile = new Tile(0,0)
 
 type ToolMode = "paint-brush" | "eraser" | "eye-dropper"
 let toolMode= "paint-brush"
@@ -123,9 +124,21 @@ function buildView(parent:Frame,tilemap:TileSheet){
 			let tileX:number = math.floor((x-self.globalPosition.x)/real_w)
 			let tileY:number = math.floor((y-self.globalPosition.y)/real_h)
 			let id:number = tileX+tileY*w
-			tiles[id].x = 1
-			tiles[id].y = 1
-			self.paint = TileSetPainter(tilemap,tiles,w,spacing)
+			
+			if(toolMode == "eraser"){
+				tiles[id].x = 1
+				tiles[id].y = 1				
+				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
+			}else if (toolMode == "eye-dropper"){
+				toolTile.x = tiles[id].x
+				toolTile.y = tiles[id].y
+				toolMode = "paint-brush"
+			}else if (toolMode == "paint-brush"){
+				tiles[id].x = toolTile.x
+				tiles[id].y = toolTile.y
+				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
+			}
+
 		},
 				
 	)
