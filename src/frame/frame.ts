@@ -5,7 +5,8 @@ import {Layout,NoChildLayout} from './layout';
 
 
 export type PaintFunction = (x:number,y:number,width:number,height:number)=>void;
-export type InteractionFunction = (f:Frame)=>void;
+export type InteractionPressFunction = (f:Frame,x:number,y:number)=>void;
+export type InteractionReleaseFunction = (f:Frame)=>void;
 
 export class Frame{
 	kind:"frame" = "frame"
@@ -17,8 +18,8 @@ export class Frame{
 	children:Frame[];
 	layout:Layout;
 	paint:PaintFunction|null;
-	onPress:InteractionFunction|null;
-	onRelease:InteractionFunction|null;
+	onPress:InteractionPressFunction|null;
+	onRelease:InteractionReleaseFunction|null;
 	needUpdate:boolean;
 	focused:Frame|null;
 
@@ -28,8 +29,8 @@ export class Frame{
 			parent:Frame|Window,
 			layout:Layout = new NoChildLayout(),
 			paint:PaintFunction|null = null,
-			onPress:InteractionFunction|null = null,
-			onRelease:InteractionFunction|null= null,
+			onPress:InteractionPressFunction|null = null,
+			onRelease:InteractionReleaseFunction|null= null,
 	){
 		this.currentPosition = new FixedPosition();
 		this.globalPosition = new FixedPosition();
@@ -182,7 +183,7 @@ export class Frame{
 			return 
 		}
 		if(this.focused && this.focused.onPress){
-			this.focused.onPress(this.focused)
+			this.focused.onPress(this.focused,x,y)
 		}
 	}
 

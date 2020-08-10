@@ -32,7 +32,7 @@ export class Button extends Frame {
 				parent,
 				new NoChildLayout(),
 				defaultPainter,
-				(self:Button)=>{ self.paint = self.activePainter},
+				(self:Button,x:number,y:number)=>{ self.paint = self.activePainter},
 				(self:Button)=>{ 
 					self.paint = self.defaultPainter
 					self.action(self.id)

@@ -78,7 +78,7 @@ function buildToolBar(parent:Frame,icons:TileSheet){
 	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"paint-brush",new Tile(21,23),icons,()=>{toolMode = "paint-brush"})
 	IconButton(toolbar,toolSize-2,"eraser",new Tile(5,11),icons,()=>{toolMode = "eraser"})
-	IconButton(toolbar,toolSize-2,"eye-dropper",new Tile(22,11),icons,()=>{"eye-dropper"})
+	IconButton(toolbar,toolSize-2,"eye-dropper",new Tile(22,11),icons,()=>{toolMode = "eye-dropper"})
 	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"trash",new Tile(36,33),icons,()=>{})
 }
@@ -97,6 +97,7 @@ function buildView(parent:Frame,tilemap:TileSheet){
 	let resolution:number = 5
 	let w:number = 4*resolution
 	let h:number = 3*resolution
+	let spacing:number = 1
 
 	for(let i=0;i<w;i++){
 		for(let j=0;j<h;j++){
@@ -114,6 +115,18 @@ function buildView(parent:Frame,tilemap:TileSheet){
 		new Size(800-toolSize,600-toolSize),
 		parent,
 		new NoChildLayout(),
-		TileSetPainter(tilemap,tiles,w,1)
+		TileSetPainter(tilemap,tiles,w,spacing),
+		(self:Frame,x:number,y:number)=>{
+			let real_w = (800-toolSize)/w
+			let real_h = (600-toolSize)/h
+			
+			let tileX:number = math.floor((x-self.globalPosition.x)/real_w)
+			let tileY:number = math.floor((y-self.globalPosition.y)/real_h)
+			let id:number = tileX+tileY*w
+			tiles[id].x = 1
+			tiles[id].y = 1
+			self.paint = TileSetPainter(tilemap,tiles,w,spacing)
+		},
+				
 	)
 }
