@@ -45,22 +45,3 @@ export class Button extends Frame {
 	}
 
 }
-
-
-export function ExampleButton(parent:Frame,w:number,h:number,text:string,action:ActionFunction):Button{
-	return new Button(
-		text,
-		new LayoutPosition(),
-		new Size(w,h),
-		parent,
-		GroupPainter([	
-			RectanglePainter(Colors.Blue,50),
-			LabelPainter(text,Colors.White,"center"),
-		]),
-		GroupPainter([	
-			RectanglePainter(Colors.Red,50),
-			LabelPainter(text,Colors.White,"center"),
-		]),
-		action,
-	)
-}

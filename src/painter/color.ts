@@ -17,6 +17,7 @@ export let Colors:Record<string,Color> = {
 	"Green" : new Color(0,1,0),
 	"Blue" : new Color(0,0,1),
 	"Black" : new Color(0,0,0),
+	"Gray": new Color(0.5,0.5,0.5)
 }
 
 

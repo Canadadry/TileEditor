@@ -161,13 +161,15 @@ export class Frame{
  	}
 
  	pick(x:number,y:number):Frame|null{
+
  		if(this.hitTest(x,y) == false){
  			return null
  		}
  		let found:Frame = this;
  		for(let i=0;i<this.children.length;i++){
-			if(this.children[i].pick(x,y) != null){
-				found = this.children[i]
+ 			let picked = this.children[i].pick(x,y)
+			if( picked != null){
+				found = picked
 			}
 		}
 		return found
@@ -176,6 +178,9 @@ export class Frame{
 	press(x:number,y:number){
 		this.release()
 		this.focused = this.pick(x,y);
+		if(this.focused == null ){
+			return 
+		}
 		if(this.focused && this.focused.onPress){
 			this.focused.onPress(this.focused)
 		}

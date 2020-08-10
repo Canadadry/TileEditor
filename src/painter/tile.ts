@@ -1,5 +1,5 @@
 import {PaintFunction} from '../frame/frame'
-import {Color} from '../painter/color';
+import {Color,Colors} from '../painter/color';
 
 
 export class TileSheet{
@@ -51,5 +51,42 @@ export function TilePainter(sheet:TileSheet,tile:Tile,c:Color) : PaintFunction{
 	return (x:number,y:number,width:number,height:number)=>{
 		love.graphics.setColor(c.r,c.g,c.b,1)
 		love.graphics.draw(sheet.img,quad,x,y,0,width/sheet.tile_w,height/sheet.tile_h)
+	}
+}
+
+export function TileSetPainter(sheet:TileSheet,tiles:Tile[],column:number,spacing:number=0,c:Color=Colors.White) : PaintFunction{
+	
+	let batch:SpriteBatch = love.graphics.newSpriteBatch(sheet.img, tiles.length)
+	let row = math.ceil(tiles.length / column)
+	let tileset_w = column*(sheet.tile_w+spacing) - spacing
+	let tileset_h = row   *(sheet.tile_h+spacing) - spacing
+
+	let x:number = 0;
+	let y:number = 0;
+
+	for(let i=0;i<tiles.length;i++){
+		let tile:Tile = tiles[i]
+
+		if(tile.x>=sheet.column){ tile.x = 0 }
+		if(tile.y>=sheet.row){ tile.y = 0 }
+
+		batch.add(love.graphics.newQuad(
+				tile.x*sheet.tile_w,tile.y*sheet.tile_h,
+				sheet.tile_w,sheet.tile_h,
+				sheet.img_w,sheet.img_h,
+			),
+			x*(sheet.tile_w+spacing),
+			y*(sheet.tile_h+spacing)
+		)
+		x++
+		if (x >= column){
+			x=0
+			y++
+		}
+	}
+
+	return (x:number,y:number,width:number,height:number)=>{
+		love.graphics.setColor(c.r,c.g,c.b,1)
+		love.graphics.draw(batch,x,y,0,width/tileset_w,height/tileset_h)
 	}
 }
