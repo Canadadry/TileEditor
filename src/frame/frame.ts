@@ -27,7 +27,7 @@ export class Frame{
 			size:Size,
 			parent:Frame|Window,
 			layout:Layout = new NoChildLayout(),
-			paint:PaintFunction|null,
+			paint:PaintFunction|null = null,
 			onPress:InteractionFunction|null = null,
 			onRelease:InteractionFunction|null= null,
 	){
@@ -107,7 +107,9 @@ export class Frame{
 
 		let layoutChild:Frame[] = [];
 		for(let i=0;i<this.children.length;i++){
-			table.insert(layoutChild,this.children[i])
+			if (this.children[i].pos.kind == "layout"){
+				table.insert(layoutChild,this.children[i])
+			}
 		}
 		if(this.layout.kind == "ColumnLayout"){
 			let y:number =0;

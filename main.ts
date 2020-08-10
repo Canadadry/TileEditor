@@ -10,66 +10,44 @@ import {GroupPainter} from './src/painter/group';
 import {NinePatchPainter} from './src/painter/ninepatch';
 import {Colors} from './src/painter/color';
 
+import {Button,ActionFunction,ExampleButton} from './src/ui/button';
 
-let window:Window;
-let frame:Frame;
-let picked:Frame|null;
-let lastPaint:PaintFunction|null;
+let root:Frame;
 
 love.update = function(dt) {
-	frame.update()
+	root.update()
 }
 
 love.draw = function() {
-	frame.draw()
+	root.draw()
+}
+
+love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean ){
+	root.press(x,y);
+}
+
+love.mousereleased = function( x:number, y:number, button:number,isTouch:boolean ){
+	root.release();
 }
 
 love.load = function() {
 	let img:Image = love.graphics.newImage( "assets/Icon.png" );
 	let np:Image = love.graphics.newImage( "assets/ninepatch.png" );
 
-	window = new Window(love.window.getMode()[0],love.window.getMode()[1])
-	frame = new Frame(
+	root = new Frame(
 		new FixedPosition(0,0),
-		new Size(200,600),
-		window,
-		new GridLayout(3,10),
-		ImagePainter(img),
+		new Size(800,600),
+		new Window(love.window.getMode()[0],love.window.getMode()[1]),
+		new GridLayout(3,10)
 	)
-
-	for(let i=0;i<7;i++){
-		let subframe = new Frame(
-			new LayoutPosition(),
-			new Size(200,100),
-			frame,
-			new NoChildLayout(),
-			GroupPainter([	
-				RectanglePainter(Colors.Red,50),
-				LabelPainter("Button"+i,Colors.White,"center"),
-			]),
-			(self:Frame)=>{
-				self.paint = RectanglePainter(Colors.Blue)
-			},
-			(self:Frame)=>{
-				self.paint = GroupPainter([	
-				RectanglePainter(Colors.Red,50),
-				LabelPainter("Button"+i,Colors.White,"center"),
-			])},
-		)
-	}
 	let subframe = new Frame(
 		new FixedPosition(400,200),
 		new Size(400,400),
-		frame,
+		root,
 		new NoChildLayout(),
 		NinePatchPainter(np,63,63,63,63)
 	)
-}
-
-love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean ){
-	frame.press(x,y);
-}
-
-love.mousereleased = function( x:number, y:number, button:number,isTouch:boolean ){
-	frame.release();
+	for(let i=0;i<13;i++){
+		ExampleButton(root,200,100,""+i,(id:string)=>{ print(id) })
+	}
 }
