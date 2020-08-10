@@ -5,6 +5,7 @@ import {Layout,NoChildLayout} from './layout';
 
 
 export type PaintFunction = (x:number,y:number,width:number,height:number)=>void;
+export type InteractionFunction = (f:Frame)=>void;
 
 export class Frame{
 	kind:"frame" = "frame"
@@ -16,7 +17,10 @@ export class Frame{
 	children:Frame[];
 	layout:Layout;
 	paint:PaintFunction|null;
+	onPress:InteractionFunction|null;
+	onRelease:InteractionFunction|null;
 	needUpdate:boolean;
+	focused:Frame|null;
 
 	constructor(
 			pos:Position,
@@ -24,6 +28,8 @@ export class Frame{
 			parent:Frame|Window,
 			layout:Layout = new NoChildLayout(),
 			paint:PaintFunction|null,
+			onPress:InteractionFunction|null = null,
+			onRelease:InteractionFunction|null= null,
 	){
 		this.currentPosition = new FixedPosition();
 		this.globalPosition = new FixedPosition();
@@ -36,6 +42,9 @@ export class Frame{
 		}
 		this.layout = layout;
 		this.paint = paint;
+		this.onPress = onPress;
+		this.onRelease = onRelease;
+		this.focused = null;
 		this.needUpdate = true;
 	}
 
@@ -162,5 +171,19 @@ export class Frame{
 		return found
 	}
 
+	press(x:number,y:number){
+		this.release()
+		this.focused = this.pick(x,y);
+		if(this.focused && this.focused.onPress){
+			this.focused.onPress(this.focused)
+		}
+	}
+
+	release(){
+		if(this.focused && this.focused.onRelease){
+			this.focused.onRelease(this.focused)
+		}
+		this.focused = null;
+	}
 
 }

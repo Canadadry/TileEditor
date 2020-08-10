@@ -46,7 +46,15 @@ love.load = function() {
 			GroupPainter([	
 				RectanglePainter(Colors.Red,50),
 				LabelPainter("Button"+i,Colors.White,"center"),
-			])
+			]),
+			(self:Frame)=>{
+				self.paint = RectanglePainter(Colors.Blue)
+			},
+			(self:Frame)=>{
+				self.paint = GroupPainter([	
+				RectanglePainter(Colors.Red,50),
+				LabelPainter("Button"+i,Colors.White,"center"),
+			])},
 		)
 	}
 	let subframe = new Frame(
@@ -59,16 +67,9 @@ love.load = function() {
 }
 
 love.mousepressed = function( x:number, y:number, button:number,isTouch:boolean ){
-	picked = frame.pick(x,y);
-	if(picked){
-		lastPaint = picked.paint
-		picked.paint = RectanglePainter(Colors.Blue)
-	}
+	frame.press(x,y);
 }
 
 love.mousereleased = function( x:number, y:number, button:number,isTouch:boolean ){
-	if(picked){
-		picked.paint = lastPaint
-		lastPaint = null
-	}
+	frame.release();
 }
