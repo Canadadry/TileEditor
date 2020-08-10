@@ -34,10 +34,7 @@ love.load = function() {
 		new Size(200,600),
 		window,
 		new GridLayout(3,10),
-		GroupPainter([	
-			ImagePainter(img),
-			LabelPainter("Hello World!",Colors.White),
-		])
+		ImagePainter(img),
 	)
 
 	for(let i=0;i<7;i++){
@@ -46,11 +43,14 @@ love.load = function() {
 			new Size(200,100),
 			frame,
 			new NoChildLayout(),
-			RectanglePainter(Colors.Red,50)
+			GroupPainter([	
+				RectanglePainter(Colors.Red,50),
+				LabelPainter("Button"+i,Colors.White,"center"),
+			])
 		)
 	}
 	let subframe = new Frame(
-		new FixedPosition(200,100),
+		new FixedPosition(400,200),
 		new Size(400,400),
 		frame,
 		new NoChildLayout(),
