@@ -169,10 +169,7 @@ function buildView(parent:Frame,tilemap:TileSheet){
 		for(let j=0;j<h;j++){
 			table.insert(
 				tiles,
-				new Tile(
-					math.random(0,13),
-					math.random(0,9)
-				)
+				new Tile(1,1)
 			)
 		}		
 	}
