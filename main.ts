@@ -99,6 +99,7 @@ function buildToolBar(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"trash",new Tile(36,33),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
+	toolGroup.select("paint-brush")
 }
 
 function buildTileSelector(parent:Frame,icons:TileSheet,tilemap:TileSheet){
@@ -139,6 +140,15 @@ function buildTileSelector(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 		tileSelector,
 		new NoChildLayout(),
 		TileSetPainter(tilemap,tiles,1,spacing),
+		(self:Frame,x:number,y:number)=>{
+			let real_h = (600-3*(toolSize+3))/maxTiles
+			let id:number = startTileId+ math.floor((y-self.globalPosition.y)/real_h)
+			let tileX:number = (id) % tilemap.column
+			let tileY:number = math.floor((id)/tilemap.column)
+			toolTile.x = tileX
+			toolTile.y = tileY
+			selectedTile.paint= TilePainter(tilemap,toolTile)
+		},	
 	)
 	IconButton(tileSelector,toolSize-2,"arrow-down",new Tile(19,1),icons,()=>{
 		if(startTileId<(tilemap.column*tilemap.row)){
