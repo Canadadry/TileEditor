@@ -124,6 +124,7 @@ I have some idea of what I can add like
 - improve image painter with keep aspect ratio, strech, center...
 - improve label painter with more alignment feature ... 
 - adding tween for animation
+- add unit test
 
 What I will not do : 
 
