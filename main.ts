@@ -11,14 +11,12 @@ import {GroupPainter} from './src/painter/group';
 import {NinePatchPainter} from './src/painter/ninepatch';
 import {Colors,Color} from './src/painter/color';
 
-import {Button,ActionFunction} from './src/ui/button';
+import {Button,ActionFunction,GroupButton} from './src/ui/button';
 
 let root:Frame;
 let toolSize:number= 35;
 let toolTile:Tile = new Tile(0,0)
-
-type ToolMode = "paint-brush" | "eraser" | "eye-dropper"
-let toolMode= "paint-brush"
+let toolGroup:GroupButton;
 
 love.update = function(dt) {
 	root.update()
@@ -47,7 +45,10 @@ function IconButton(parent:Frame,size:number,text:string,tile:Tile,tilesheet:Til
 			RectanglePainter(new Color(0.4,0.4,0.4),7),
 			TilePainter(tilesheet,tile,new Color(0.3,0.3,0.3)),
 		]),
-
+		GroupPainter([
+			RectanglePainter(new Color(0.4,0.4,0.4),7),
+			TilePainter(tilesheet,tile,new Color(1,1,1)),
+		]),
 		GroupPainter([
 			RectanglePainter(new Color(0.6,0.6,0.6),7),
 			TilePainter(tilesheet,tile,new Color(0.8,0.8,0.8)),
@@ -84,9 +85,11 @@ function buildToolBar(parent:Frame,icons:TileSheet){
 	)
 	let leftMargin = new Frame(new LayoutPosition(),new Size(0,toolSize-2),toolbar)
 	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
-	IconButton(toolbar,toolSize-2,"paint-brush",new Tile(21,23),icons,()=>{toolMode = "paint-brush"})
-	IconButton(toolbar,toolSize-2,"eraser",new Tile(5,11),icons,()=>{toolMode = "eraser"})
-	IconButton(toolbar,toolSize-2,"eye-dropper",new Tile(22,11),icons,()=>{toolMode = "eye-dropper"})
+	toolGroup = new GroupButton([
+		IconButton(toolbar,toolSize-2,"paint-brush",new Tile(21,23),icons,(id:string)=>{toolGroup.select(id)}),
+		IconButton(toolbar,toolSize-2,"eraser",new Tile(5,11),icons,(id:string)=>{toolGroup.select(id)}),
+		IconButton(toolbar,toolSize-2,"eye-dropper",new Tile(22,11),icons,(id:string)=>{toolGroup.select(id)}),
+	])
 	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"trash",new Tile(36,33),icons,()=>{})
 }
@@ -132,15 +135,15 @@ function buildView(parent:Frame,tilemap:TileSheet){
 			let tileY:number = math.floor((y-self.globalPosition.y)/real_h)
 			let id:number = tileX+tileY*w
 			
-			if(toolMode == "eraser"){
+			if(toolGroup.selected == "eraser"){
 				tiles[id].x = 1
 				tiles[id].y = 1				
 				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
-			}else if (toolMode == "eye-dropper"){
+			}else if (toolGroup.selected == "eye-dropper"){
 				toolTile.x = tiles[id].x
 				toolTile.y = tiles[id].y
-				toolMode = "paint-brush"
-			}else if (toolMode == "paint-brush"){
+				toolGroup.select("paint-brush")
+			}else if (toolGroup.selected == "paint-brush"){
 				tiles[id].x = toolTile.x
 				tiles[id].y = toolTile.y
 				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
