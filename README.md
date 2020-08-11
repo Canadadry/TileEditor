@@ -4,7 +4,7 @@ Main reason for this editor is to write and test a Ui library
 
 It will be documented soon.
 
-[screenshot](!screenshot.png)
+![screenshot](screenshot.png)
 
 To load this map copy in your clipboard and click on the load icon 
 ```json
