@@ -18,6 +18,7 @@ let toolSize:number= 35;
 let toolTile:Tile = new Tile(0,0)
 let toolGroup:GroupButton;
 let selectedTile:Frame;
+let gameTiles:Tile[] = [];
 
 love.update = function(dt) {
 	root.update()
@@ -96,8 +97,17 @@ function buildToolBar(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 		IconButton(toolbar,toolSize-2,"eraser",new Tile(5,11),icons,(id:string)=>{toolGroup.select(id)}),
 		IconButton(toolbar,toolSize-2,"eye-dropper",new Tile(22,11),icons,(id:string)=>{toolGroup.select(id)}),
 	])
-	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{})
-	IconButton(toolbar,toolSize-2,"trash",new Tile(36,33),icons,()=>{})
+	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{
+		let saved:string = gameTiles[0].x+","+gameTiles[0].y
+		for(let i:number=1;i<gameTiles.length;i++){
+			let t = gameTiles[i]
+			saved = saved+";"+t.x+","+t.y
+		}
+		love.system.setClipboardText( saved )
+	})
+	IconButton(toolbar,toolSize-2,"download",new Tile(7,10),icons,()=>{
+
+	})
 	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
 	toolGroup.select("paint-brush")
 }
@@ -159,7 +169,6 @@ function buildTileSelector(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 	})
 }
 function buildView(parent:Frame,tilemap:TileSheet){
-	let tiles:Tile[] = [];
 	let resolution:number = 5
 	let w:number = 4*resolution
 	let h:number = 3*resolution
@@ -168,7 +177,7 @@ function buildView(parent:Frame,tilemap:TileSheet){
 	for(let i=0;i<w;i++){
 		for(let j=0;j<h;j++){
 			table.insert(
-				tiles,
+				gameTiles,
 				new Tile(1,1)
 			)
 		}		
@@ -178,7 +187,7 @@ function buildView(parent:Frame,tilemap:TileSheet){
 		new Size(800-toolSize,600-toolSize),
 		parent,
 		new NoChildLayout(),
-		TileSetPainter(tilemap,tiles,w,spacing),
+		TileSetPainter(tilemap,gameTiles,w,spacing),
 		(self:Frame,x:number,y:number)=>{
 			let real_w = (800-toolSize)/w
 			let real_h = (600-toolSize)/h
@@ -188,18 +197,18 @@ function buildView(parent:Frame,tilemap:TileSheet){
 			let id:number = tileX+tileY*w
 			
 			if(toolGroup.selected == "eraser"){
-				tiles[id].x = 1
-				tiles[id].y = 1				
-				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
+				gameTiles[id].x = 1
+				gameTiles[id].y = 1				
+				self.paint = TileSetPainter(tilemap,gameTiles,w,spacing)
 			}else if (toolGroup.selected == "eye-dropper"){
-				toolTile.x = tiles[id].x
-				toolTile.y = tiles[id].y
+				toolTile.x = gameTiles[id].x
+				toolTile.y = gameTiles[id].y
 				selectedTile.paint= TilePainter(tilemap,toolTile)
 				toolGroup.select("paint-brush")
 			}else if (toolGroup.selected == "paint-brush"){
-				tiles[id].x = toolTile.x
-				tiles[id].y = toolTile.y
-				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
+				gameTiles[id].x = toolTile.x
+				gameTiles[id].y = toolTile.y
+				self.paint = TileSetPainter(tilemap,gameTiles,w,spacing)
 			}
 		},	
 	)
