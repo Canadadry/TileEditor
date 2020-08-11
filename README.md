@@ -2,6 +2,14 @@
 
 This is in fact a UI framework, this editor is just a demo of of what this ui tool kit can do
 
+**Why is it not written in lua ?**
+
+As you can see, This project is written in typescript not in lua.
+For my mental health I have stopped working with non typed language.
+As I cant remember which type each variable is supposed to be. I have two options : 
+ 1. let the runtime tell me I have made a mistake by giving a table instead of a number at line 345 of demo.lua (which I may or may not have written)
+ 2. add a compilator to check for me.  
+
 ![screenshot](screenshot.png)
 
 To load this map copy in your clipboard and click on the load icon 
@@ -24,9 +32,9 @@ To load this map copy in your clipboard and click on the load icon
 
 ## Ui toolkit Documentation
 
-There is 3 main part of the Ui tool kit : 
+There is 3 main part of this Ui tool kit : 
 
- 1. Frame: This is the core of the toolkit. Which holds frame, layout and hierachie. This is a standalone lib which depend on nothing
+ 1. Frame: This is the core of the toolkit. Which holds the frame, the layout and the hierachie. This is a standalone lib which depend on nothing
  2. Painter: The `Frame` part does not render any thing but ask for `Painter` function to render its content. It allow you a lot of controle on how you want to draw stuff. This part of the lib contain basic painter like text, image and tiles
  3. Ui: This part add interactivity class which lack from `Frame`.
 
@@ -50,8 +58,8 @@ Each Frame hold those properties :
 	- `ColumnLayout` : fixe their position to be drawn in a column
 	- `RowLayout` : fixe their position to be drawn in a row
 	- `GridLayout` : fixe their position to be drawn in a grid (you must specifiy the number of columns)
-	- `PainterFunction`: pick one of the pre-existing from the `Painter` or write one yourselfe
-	- `OnPress|OnRelease` : start building interactive widget by implementing this funtion
+- `PainterFunction`: pick one of the pre-existing from the `Painter` or write one yourselfe
+- `OnPress|OnRelease` : start building interactive widget by implementing this funtion
 
 
 **Example**
