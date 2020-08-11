@@ -9,7 +9,7 @@ import {TilePainter,TileSheet,Tile,TileSetPainter} from './src/painter/tile';
 import {LabelPainter} from './src/painter/label';
 import {GroupPainter} from './src/painter/group';
 import {NinePatchPainter} from './src/painter/ninepatch';
-import {Colors} from './src/painter/color';
+import {Colors,Color} from './src/painter/color';
 
 import {Button,ActionFunction} from './src/ui/button';
 
@@ -43,8 +43,15 @@ function IconButton(parent:Frame,size:number,text:string,tile:Tile,tilesheet:Til
 		new LayoutPosition(),
 		new Size(size,size),
 		parent,
-		TilePainter(tilesheet,tile,Colors.Black),
-		TilePainter(tilesheet,tile,Colors.White),
+		GroupPainter([
+			RectanglePainter(new Color(0.4,0.4,0.4),7),
+			TilePainter(tilesheet,tile,new Color(0.3,0.3,0.3)),
+		]),
+
+		GroupPainter([
+			RectanglePainter(new Color(0.6,0.6,0.6),7),
+			TilePainter(tilesheet,tile,new Color(0.8,0.8,0.8)),
+		]),
 		action,
 	)
 }
@@ -75,7 +82,7 @@ function buildToolBar(parent:Frame,icons:TileSheet){
 		new RowLayout(5),
 		RectanglePainter(Colors.Gray)
 	)
-
+	let leftMargin = new Frame(new LayoutPosition(),new Size(0,toolSize-2),toolbar)
 	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"paint-brush",new Tile(21,23),icons,()=>{toolMode = "paint-brush"})
 	IconButton(toolbar,toolSize-2,"eraser",new Tile(5,11),icons,()=>{toolMode = "eraser"})
