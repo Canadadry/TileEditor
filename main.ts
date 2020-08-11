@@ -13,12 +13,20 @@ import {Colors,Color} from './src/painter/color';
 
 import {Button,ActionFunction,GroupButton} from './src/ui/button';
 
+let json = require("vendor.json")
+
 let root:Frame;
 let toolSize:number= 35;
 let toolTile:Tile = new Tile(0,0)
 let toolGroup:GroupButton;
 let selectedTile:Frame;
 let gameTiles:Tile[] = [];
+let view:Frame;
+let resolution:number = 5
+let w:number = 4*resolution
+let h:number = 3*resolution
+let spacing:number = 1
+
 
 love.update = function(dt) {
 	root.update()
@@ -98,15 +106,11 @@ function buildToolBar(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 		IconButton(toolbar,toolSize-2,"eye-dropper",new Tile(22,11),icons,(id:string)=>{toolGroup.select(id)}),
 	])
 	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{
-		let saved:string = gameTiles[0].x+","+gameTiles[0].y
-		for(let i:number=1;i<gameTiles.length;i++){
-			let t = gameTiles[i]
-			saved = saved+";"+t.x+","+t.y
-		}
-		love.system.setClipboardText( saved )
+		love.system.setClipboardText(json.encode(gameTiles))
 	})
 	IconButton(toolbar,toolSize-2,"download",new Tile(7,10),icons,()=>{
-
+		gameTiles = json.decode(love.system.getClipboardText())
+		view.paint = TileSetPainter(tilemap,gameTiles,w,spacing)
 	})
 	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
 	toolGroup.select("paint-brush")
@@ -169,10 +173,6 @@ function buildTileSelector(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 	})
 }
 function buildView(parent:Frame,tilemap:TileSheet){
-	let resolution:number = 5
-	let w:number = 4*resolution
-	let h:number = 3*resolution
-	let spacing:number = 1
 
 	for(let i=0;i<w;i++){
 		for(let j=0;j<h;j++){
@@ -182,7 +182,7 @@ function buildView(parent:Frame,tilemap:TileSheet){
 			)
 		}		
 	}
-	let view:Frame = new Frame(
+	view = new Frame(
 		new FixedPosition(toolSize,toolSize),
 		new Size(800-toolSize,600-toolSize),
 		parent,
