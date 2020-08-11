@@ -17,6 +17,7 @@ let root:Frame;
 let toolSize:number= 35;
 let toolTile:Tile = new Tile(0,0)
 let toolGroup:GroupButton;
+let selectedTile:Frame;
 
 love.update = function(dt) {
 	root.update()
@@ -69,13 +70,13 @@ love.load = function() {
 		new NoChildLayout()
 	)
 
-	buildToolBar(root,icons)
-	buildTileSelector(root,tilemap)
+	buildToolBar(root,icons,tilemap)
+	buildTileSelector(root,icons,tilemap)
 	buildView(root,tilemap)
 
 }
 
-function buildToolBar(parent:Frame,icons:TileSheet){
+function buildToolBar(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 	let toolbar:Frame = new Frame(
 		new FixedPosition(0,0),
 		new Size(800,toolSize),
@@ -83,8 +84,13 @@ function buildToolBar(parent:Frame,icons:TileSheet){
 		new RowLayout(5),
 		RectanglePainter(Colors.Gray)
 	)
-	let leftMargin = new Frame(new LayoutPosition(),new Size(0,toolSize-2),toolbar)
-	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
+	selectedTile = new Frame(
+		new LayoutPosition(),
+		new Size(toolSize-2,toolSize-2),
+		toolbar,
+		new NoChildLayout(),
+		TilePainter(tilemap,toolTile),
+	)
 	toolGroup = new GroupButton([
 		IconButton(toolbar,toolSize-2,"paint-brush",new Tile(21,23),icons,(id:string)=>{toolGroup.select(id)}),
 		IconButton(toolbar,toolSize-2,"eraser",new Tile(5,11),icons,(id:string)=>{toolGroup.select(id)}),
@@ -92,16 +98,36 @@ function buildToolBar(parent:Frame,icons:TileSheet){
 	])
 	IconButton(toolbar,toolSize-2,"save",new Tile(28,27),icons,()=>{})
 	IconButton(toolbar,toolSize-2,"trash",new Tile(36,33),icons,()=>{})
+	IconButton(toolbar,toolSize-2,"ellipsis-h",new Tile(32,10),icons,()=>{})
 }
 
-function buildTileSelector(parent:Frame,tilemap:TileSheet){
-		let tool:Frame = new Frame(
+function buildTileSelector(parent:Frame,icons:TileSheet,tilemap:TileSheet){
+	let tileSelector:Frame = new Frame(
 		new FixedPosition(0,toolSize),
 		new Size(toolSize,600-toolSize),
 		parent,
-		new NoChildLayout(),
+		new ColumnLayout(5),
 		RectanglePainter(Colors.Gray)
 	)
+	let startTileId:number = 0
+	let maxTiles:number = 13
+	let tiles:Tile[] = [];	
+	for(let i=0;i<maxTiles;i++){
+		let tileX:number = i % tilemap.column
+		let tileY:number = math.floor(i/tilemap.column)
+		table.insert( tiles,new Tile(tileX,tileY) )
+	}
+
+	let spacing:number = 1
+	IconButton(tileSelector,toolSize-2,"arrow-up",new Tile(22,1),icons,()=>{})
+	let tilesView:Frame = new Frame(
+		new LayoutPosition(),
+		new Size(toolSize,600-3*(toolSize+3)),
+		tileSelector,
+		new NoChildLayout(),
+		TileSetPainter(tilemap,tiles,1,spacing),
+	)
+	IconButton(tileSelector,toolSize-2,"arrow-down",new Tile(19,1),icons,()=>{})
 }
 function buildView(parent:Frame,tilemap:TileSheet){
 	let tiles:Tile[] = [];
@@ -142,14 +168,13 @@ function buildView(parent:Frame,tilemap:TileSheet){
 			}else if (toolGroup.selected == "eye-dropper"){
 				toolTile.x = tiles[id].x
 				toolTile.y = tiles[id].y
+				selectedTile.paint= TilePainter(tilemap,toolTile)
 				toolGroup.select("paint-brush")
 			}else if (toolGroup.selected == "paint-brush"){
 				tiles[id].x = toolTile.x
 				tiles[id].y = toolTile.y
 				self.paint = TileSetPainter(tilemap,tiles,w,spacing)
 			}
-
-		},
-				
+		},	
 	)
 }

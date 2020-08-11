@@ -33,7 +33,7 @@ export class Tile {
 	}
 }
 
-export function TilePainter(sheet:TileSheet,tile:Tile,c:Color) : PaintFunction{
+export function TilePainter(sheet:TileSheet,tile:Tile,c:Color=Colors.White) : PaintFunction{
 
 	if(tile.x>=sheet.column){
 		tile.x= 0
