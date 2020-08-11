@@ -109,25 +109,44 @@ function buildTileSelector(parent:Frame,icons:TileSheet,tilemap:TileSheet){
 		new ColumnLayout(5),
 		RectanglePainter(Colors.Gray)
 	)
-	let startTileId:number = 0
-	let maxTiles:number = 13
-	let tiles:Tile[] = [];	
-	for(let i=0;i<maxTiles;i++){
-		let tileX:number = i % tilemap.column
-		let tileY:number = math.floor(i/tilemap.column)
-		table.insert( tiles,new Tile(tileX,tileY) )
+
+	let tiles:Tile[] = [];
+	let updateTiles = (st:number,mx:number)=>{
+		tiles = [];	
+		for(let i=0;i<mx;i++){
+			let tileX:number = (i+st) % tilemap.column
+			let tileY:number = math.floor((i+st)/tilemap.column)
+			table.insert( tiles,new Tile(tileX,tileY) )
+		}
 	}
 
+	let startTileId:number = 0
+	let maxTiles:number = 13
+	updateTiles(startTileId,maxTiles)
+
 	let spacing:number = 1
-	IconButton(tileSelector,toolSize-2,"arrow-up",new Tile(22,1),icons,()=>{})
-	let tilesView:Frame = new Frame(
+	let tilesView:Frame;
+	IconButton(tileSelector,toolSize-2,"arrow-up",new Tile(22,1),icons,()=>{
+		if(startTileId>0){
+			startTileId = startTileId - maxTiles
+			updateTiles(startTileId,maxTiles)
+			tilesView.paint = TileSetPainter(tilemap,tiles,1,spacing)
+		}
+	})
+	tilesView = new Frame(
 		new LayoutPosition(),
 		new Size(toolSize,600-3*(toolSize+3)),
 		tileSelector,
 		new NoChildLayout(),
 		TileSetPainter(tilemap,tiles,1,spacing),
 	)
-	IconButton(tileSelector,toolSize-2,"arrow-down",new Tile(19,1),icons,()=>{})
+	IconButton(tileSelector,toolSize-2,"arrow-down",new Tile(19,1),icons,()=>{
+		if(startTileId<(tilemap.column*tilemap.row)){
+			startTileId = startTileId + maxTiles
+			updateTiles(startTileId,maxTiles)
+			tilesView.paint = TileSetPainter(tilemap,tiles,1,spacing)
+		}
+	})
 }
 function buildView(parent:Frame,tilemap:TileSheet){
 	let tiles:Tile[] = [];
